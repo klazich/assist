@@ -1,7 +1,9 @@
-const AQL_LEVEL = [.010, .015, .025, .040, .065, .10, .15, .25, .40, .65, 1.0, 1.5, 2.5, 4.0, 6.5, 10.0];
-const LOT_SIZE = [2, 8, 15, 25, 50, 90, 150, 280, 500, 1200, 3200, 10000, 35000, 150000, 500000];
-const AQL_TABLE = [
-  // -> .010, .015, .025, .040, .065, .10, .15, .25, .40, .65, 1.0, 1.5, 2.5, 4.0, 6.5, 10.0
+const AQL_LEVEL  = [.010, .015, .025, .040, .065, .10, .15, .25, .40, .65, 1.0, 1.5, 2.5, 4.0, 6.5, 10.0];
+const LOT_SIZE   = [2, 8, 15, 25, 50, 90, 150, 280, 500, 1200, 3200, 10000, 35000, 150000, 500000];
+const LOT_RANGES = ['2 to 8', '9 to 15', '16 to 25', '26 to 50', '51 to 90', '91 to 150',
+                    '151 to 280', '281 to 500', '501 to 1200', '1201 to 3200', '3201 to 10000',
+                    '10001 to 35000', '35001 to 150000', '150001 to 500000', '500001 and over'];
+const AQL_TABLE  = [
   ['ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 5, 3, 2, 2],
   ['ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 13, 8, 5, 3, 2, 2],
   ['ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 'ALL', 20, 13, 8, 5, 3, 3, 2],
@@ -19,14 +21,23 @@ const AQL_TABLE = [
   [1250, 1200, 1112, 715, 556, 435, 303, 244, 189, 143, 102, 64, 40, 29, 15, 9]
 ];
 
-const getSampleSize = (aql, lotSize, cb) => {
-  let aqlIndex = AQL_LEVEL.findIndex(v => v === aql);
-  let lotIndex = LOT_SIZE.findIndex(v => lotSize < v) - 1;
-  let result = AQL_TABLE[lotIndex][aqlIndex];
-  let sampleSize = result === 'ALL'
-    ? lotSize
-    : result
-  cb(undefined, sampleSize);
-}
+const getSampleSize = (aql, lotSize) => {
 
-module.exports = { getSampleSize } 
+  let lotIndex = LOT_SIZE.findIndex(v => lotSize < v) - 1;
+  if (lotIndex < 0) lotIndex = 14;
+  let result   = AQL_TABLE[lotIndex][AQL_LEVEL.findIndex(v => v === aql)];
+  let lotRange = LOT_RANGES[lotIndex];
+
+  return new Promise((resolve, reject) => {
+    if (lotIndex === -1) {
+      reject(`Could not match AQL -> ${aql}`)
+    } else {
+      let obj = result === 'ALL'
+        ? { sampleSize: lotSize, lotRange }
+        : { sampleSize: result, lotRange };
+      resolve(obj)
+    }
+  })
+};
+
+module.exports = getSampleSize;
