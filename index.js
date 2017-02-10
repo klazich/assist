@@ -13,11 +13,14 @@ const _ = require('lodash')
 let dep = { join, resolve, fs, console, colors, shell, process, yargs, _ }
 
 // Internal dependencies
-const inDepFns = requireDir(join(__dirname, 'lib', 'modules'))
+const inDepFns = requireDir(join(__dirname, 'lib', 'modules'), { recurse: true })
 Object.keys(inDepFns).forEach(name => {
-  dep[camelCase(name)] = inDepFns[name](dep)
+  let child = inDepFns[name]
+  typeof child === 'function'
+    ? dep[camelCase(name)] = child(dep)
+    : Object.keys(child).forEach(subName => dep[camelCase(subName)] = child[subName](dep))
 })
-console.log(dep);
+
 // Load commands from folder and pass dependencies
 const commandsFn = requireDir(join(__dirname, 'lib', 'commands'))
 const commands = Object.keys(commandsFn).map((i) => commandsFn[i](dep))
