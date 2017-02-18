@@ -8,15 +8,28 @@ const shell = require('shelljs')
 const fs = require('fs')
 const yargs = require('yargs')
 const _ = require('lodash')
+const moment = require('moment')
 
 // External dependencies to pass to the commands
-let dep = { join, resolve, fs, console, colors, shell, process, yargs, _ }
+let dep = {
+  join,
+  resolve,
+  fs,
+  console,
+  colors,
+  shell,
+  process,
+  yargs,
+  _,
+  moment
+}
 
 // Internal dependencies
 const inDepFns = requireDir(join(__dirname, 'lib', 'modules'), { recurse: true })
 Object.keys(inDepFns).forEach(name => {
   let child = inDepFns[name]
   typeof child === 'function'
+    // check one level if not function.
     ? dep[camelCase(name)] = child(dep)
     : Object.keys(child).forEach(subName => dep[camelCase(subName)] = child[subName](dep))
 })
