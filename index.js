@@ -29,7 +29,7 @@ const inDepFns = requireDir(join(__dirname, 'lib', 'modules'), { recurse: true }
 Object.keys(inDepFns).forEach(name => {
   let child = inDepFns[name]
   typeof child === 'function'
-    // check one level if not function.
+    // check one level down if not function.
     ? dep[camelCase(name)] = child(dep)
     : Object.keys(child).forEach(subName => dep[camelCase(subName)] = child[subName](dep))
 })
