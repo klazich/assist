@@ -1,26 +1,13 @@
-const moment = require('moment')
+const _ = require('lodash')
 
-moment().format('MMMM Do YYYY, h:mm:ss a')
+let ARR = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
 
-
-let date = {
-  day:         moment().day(),
-  week:        moment().week(),
-  month:       moment().format('MMM'),
-  isPayWeek:   moment().week() % 2 === 0,
-  workWeekDay: moment().week() % 2 === 0
-                 ? moment().day() + 7
-                 : moment().day()
+let idx = 1
 
 
-}
+let x = []
+_.range(idx - 2, idx + 3).forEach(v => {
+  if (typeof ARR[v] !== 'undefined') x.push(ARR[v])
+})
 
-console.log(JSON.stringify(date, null, 2))
-
-const { modules } = require('./index')
-
-let { punch } = modules
-
-punch.punch('kevin')
-  .then((punch) => console.log(punch))
-  .catch(e => console.error(e))
+console.log(x)
