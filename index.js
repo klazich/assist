@@ -31,7 +31,7 @@ Object.keys(inDepFns).forEach(name => {
   typeof child === 'function'
     // check one level down if not function.
     ? dep[camelCase(name)] = child(dep)
-    : Object.keys(child).forEach(subName => dep[camelCase(subName)] = child[subName](dep))
+    : Object.keys(child).forEach(subName => { dep[camelCase(subName)] = child[subName](dep) })
 })
 
 // Load commands from folder and pass dependencies

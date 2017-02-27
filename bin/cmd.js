@@ -16,13 +16,6 @@ yargs
   .help()
   .options({ cwd: { desc: 'Change the current working directory' } })
   .demand(1)
-  //.fail(function (msg, err, yargs) {
-  //  if (err) throw err // preserve stack
-  //  console.error('You broke it!')
-  //  console.error(msg)
-  //  console.error('You should be doing', yargs.help())
-  //  process.exit(1)
-  //})
   .epilog(
     (homepage
       ? `| Documentation: ${homepage}\n`
@@ -31,3 +24,4 @@ yargs
       ? `| version: ${version}`
       : ''))
   .argv
+
