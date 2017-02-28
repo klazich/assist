@@ -6,22 +6,26 @@ const requireDir = require('require-dir')
 const colors = require('chalk')
 const shell = require('shelljs')
 const fs = require('fs')
+const readline = require('readline')
 const yargs = require('yargs')
 const _ = require('lodash')
 const moment = require('moment')
+const stripAnsi = require('strip-ansi')
 
 // External dependencies to pass to the commands
 let dep = {
   join,
   resolve,
   fs,
+  readline,
   console,
   colors,
   shell,
   process,
   yargs,
   _,
-  moment
+  moment,
+  stripAnsi
 }
 
 // Internal dependencies
