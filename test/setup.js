@@ -1,4 +1,4 @@
 'use strict'
 
-global.expect = require('expect')
-global.assert = require('assert')
+global.expect = require('chai').expect
+global.assert = require('chai').assert
