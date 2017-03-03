@@ -18,6 +18,15 @@
     "assist": "./bin/cmd.js",
     "qi": "./bin/cmd.js"
   },
+  "nyc":{
+    "exclude":[
+      "lib/scaffolding/**",
+      "lib/modules/pipe.js"
+    ]
+  },
+  "standard": {
+    "globals": [ "it", "describe" ]
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "expect": "^1.20.2",
@@ -29,7 +38,7 @@
   "scripts": {
     "coverage": "istanbul cover .",
     "coverage-mocha": "istanbul cover node_modules/mocha/bin/_mocha test/**/*.js",
-    "standard": "standard",
-    "test": "standard --fix & mocha test/**/*.js --reporter spec"
+    "standard": "standard --fix",
+    "test": "standard --fix & nyc mocha test/**/*.js"
   }
 }
