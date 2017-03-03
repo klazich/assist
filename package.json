@@ -21,7 +21,8 @@
   "nyc":{
     "exclude":[
       "lib/scaffolding/**",
-      "lib/modules/pipe.js"
+      "lib/modules/pipe.js",
+      "lib/modules/*.assets.js"
     ]
   },
   "standard": {
@@ -36,9 +37,8 @@
     "standard": "^8.6.0"
   },
   "scripts": {
-    "coverage": "istanbul cover .",
-    "coverage-mocha": "istanbul cover node_modules/mocha/bin/_mocha test/**/*.js",
     "standard": "standard --fix",
-    "test": "standard --fix & nyc mocha test/**/*.js"
+    "test": "mocha test/**/*.js",
+    "test:coverage" : "yarn standard & nyc --reporter=html --reporter=text mocha test/**/*.js"
   }
 }
