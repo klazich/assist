@@ -12,7 +12,7 @@ describe('modules/log.js', () => {
 
     it('should optput cli header prompt on first line', () => {
       let formatted = stripAnsi(format('test', 'test message'))
-        .split('\n')[0]
+        .split('\n')[1]
       expect(formatted).to.equal('        << QI/a')
     })
 
