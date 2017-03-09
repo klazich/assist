@@ -2,9 +2,7 @@
 module.exports = function (dep) {
   let result = {}
 
-  result.commandFile =
-    `'use strict'
-
+  result.commandFile = `
 module.exports = function (dep) {
   let cmd = {}
 
@@ -18,11 +16,11 @@ module.exports = function (dep) {
   return cmd
 }
 `
-  result.moduleFile =
-    `'use strict'
-
+  result.moduleFile = `    
 module.exports = function (dep) {
   let result = {}
+
+  const { } = dep
 
   return result
 }
