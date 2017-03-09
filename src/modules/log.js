@@ -2,34 +2,51 @@
 module.exports = function (dep) {
   let result = {}
 
-  const { console, _ } = dep
+  const { winston, resolve, join } = dep
 
+  let logDir = resolve(__dirname, '..', '..', 'logs')
 
-  result.format = function (title, message = '') {
+  let logger = new winston.Logger({
+    transports: [
+      new (winston.transports.Console)({
+        level: 'debug',
+        colorize: true,
+        prettyPrint: true,
+        showLevel: false
+      }),
+      new (winston.transports.File)({
+        name: 'debug-file',
+        level: 'debug',
+        filename: join(logDir, 'filelog-debug.log'),
+        colorize: true,
+        prettyPrint: true
+      }),
+      new (winston.transports.File)({
+        name: 'error-file',
+        level: 'error',
+        filename: join(logDir, 'filelog-error.log'),
+        colorize: true,
+        prettyPrint: true
+      })
+    ],
+    exceptionHandlers: [
+      new (winston.transports.Console)({
+        colorize: true,
+        prettyPrint: true,
+        humanReadableUnhandledException: true
+      }),
+      new (winston.transports.File)({
+        filename: join(logDir, 'exceptions.log'),
+        humanReadableUnhandledException: true,
+        prettyPrint: true
+      })
+    ]
 
-    
+  })
 
-    try {
-      message = message
-        .split('\n')
-        .map(s => ' | ' + s)
-    } catch (e) {
-      message = JSON.stringify(message, null, 2)
-      message = message
-        .split('\n')
-        .map(s => ' | ' + s)
-    }
-    if (title) message = message.map(s => title.trim().toUpperCase() + s)
+  logger.cli()
 
-    message = message.join('\n')
+  result = logger
 
-    return message
-  }
-
-  result.ger = function (title, message) {
-    let consoleOutput = result.format(title, message)
-
-    console.log(consoleOutput)
-  }
   return result
 }

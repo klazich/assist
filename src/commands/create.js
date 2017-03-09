@@ -17,7 +17,7 @@ module.exports = function (dep) {
       description: 'Force file overwrite'
     },
     deploy: {
-      alias: 'D',
+      alias: 'd',
       description: 'Deploy file to cli tool'
     },
     debug: {
@@ -32,65 +32,66 @@ module.exports = function (dep) {
 
     let tasks = []
 
-
     if (command) {
-      if (deploy)
+      if (deploy) {
         tasks.push({
           option: 'deploy',
           oldPath: join(root, 'scaffolding', 'commands', `${fileName}.js`),
           path: join(root, 'commands', `${fileName}.js`),
           exists: fs.existsSync(join(root, 'commands', `${fileName}.js`))
         })
-      else
+      } else {
         tasks.push({
           option: 'make',
           path: join(root, 'scaffolding', 'commands', `${fileName}.js`),
           data: createAssets.commandFile,
           exists: fs.existsSync(join(root, 'scaffolding', 'commands', `${fileName}.js`))
         })
+      }
     }
     if (mod) {
-      if (deploy)
+      if (deploy) {
         tasks.push({
           option: 'deploy',
           oldPath: join(root, 'scaffolding', 'modules', `${fileName}.js`),
           path: join(root, 'modules', `${fileName}.js`),
           exists: fs.existsSync(join(root, 'modules', `${fileName}.js`))
         })
-      else
+      } else {
         tasks.push({
           option: 'make',
           path: resolve(root, 'scaffolding', 'modules', `${fileName}.js`),
           data: createAssets.moduleFile,
           exists: fs.existsSync(join(root, 'scaffolding', 'modules', `${fileName}.js`))
         })
+      }
     }
 
     tasks.forEach(o => {
-      if (o.exists && !force) return log.ger(null,
-        `A file already exists at path:
+      if (o.exists && !force) {
+        return log.info(
+          (`A file already exists at path:
   (use the 'force' flag (--force, -f) to overwrite)
           
           ${o.path}
 
-The file was not created.`
-      )
+The file was not created.`))
+      }
       if (o.option === 'make') {
         create.file(o.path, o.data)
-          .then(filePath => log.ger(null, `created ${filePath}`))
-          .catch(e => log.ger('error', e))
+          .then(filePath => log.info(`created ${filePath}`))
+          .catch(e => log.error(e))
       }
       if (o.option === 'deploy') {
         create.move(o.path, o.oldPath)
-          .then(filePath => log.ger(null, `created ${filePath}`))
-          .catch(e => log.ger('error', e))
+          .then(filePath => log.info(`created ${filePath}`))
+          .catch(e => log.error(e))
       }
     })
 
     console.log()
 
-    if (debug) log.ger('debug', JSON.stringify(argv, null, 2))
-
+    if (debug) log.debug(JSON.stringify(argv, null, 2))
   }
 
   return cmd

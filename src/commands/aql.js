@@ -8,6 +8,7 @@ module.exports = function (dep) {
       describe: 'Output argv object'
     },
     'debug-result': {
+      alias: 'dr',
       describe: 'Output result object'
     },
     expand: {
@@ -16,7 +17,7 @@ module.exports = function (dep) {
     }
   }
   cmd.handler = function (argv) {
-    const { level, lotSize, debug, expand } = argv
+    const { level, lotSize, dr, debug, expand } = argv
     const { _, log, aql: { getSampleSize } } = dep
     const { gray, green } = dep.colors
 
@@ -25,23 +26,22 @@ module.exports = function (dep) {
         let { lot, range } = result
         let { size, aql } = range.filter(e => e.result)[0]
 
-        log.ger(null, `Lot Size:    ${_.padEnd(lotSize, 6)} ${gray(`(${lot})`)}`)
-        log.ger(null, `AQL Level:   ${_.padEnd(level, 6)} ${gray(`(${aql})`)}`)
-        log.ger(null, `Sample Size: ${green(size)}`)
+        log.info(`Lot Size:    ${_.padEnd(lotSize, 6)} ${gray(`(${lot})`)}`)
+        log.info(`AQL Level:   ${_.padEnd(level, 6)} ${gray(`(${aql})`)}`)
+        log.info(`Sample Size: ${green(size)}`)
 
         if (expand) {
-          log.ger(null, '')
+          log.info('')
           range.forEach(o => {
-            if (o.aql === aql) log.ger(null, `  ${_.padEnd(o.aql, 6)}> ${o.size} <`)
-            else log.ger(null, `  ${_.padEnd(o.aql, 6)}  ${_.padEnd(o.size, 6)}`)
+            if (o.aql === aql) log.info(`  ${_.padEnd(o.aql, 6)}> ${o.size} <`)
+            else log.info(`  ${_.padEnd(o.aql, 6)}  ${_.padEnd(o.size, 6)}`)
           })
         }
 
-        if (debug) log.ger('debug', JSON.stringify(argv, null, 2))
-        if (debugResult) log.ger('debug',JSON.stringify(result, null, 2))
-
+        if (debug) log.debug(argv)
+        if (dr) log.debug(result)
       })
-      .catch((e) => log.ger('error', e))
+      .catch((e) => log.error(e))
   }
 
   return cmd
