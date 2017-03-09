@@ -29,22 +29,22 @@ module.exports = function (dep) {
 
     if (command) {
       let path = resolve(__dirname, '../commands', `${fileName}.js`)
-      if (fs.existsSync(path) && !force) log.ger('warn', `file: '${fileName}.js' already exists @ /lib/commands. Use the 'force' flag (--force, -f) to overwrite`)
+      if (fs.existsSync(path) && !force) log.ger('warn', `file: '${fileName}.js' already exists @ /src/commands. Use the 'force' flag (--force, -f) to overwrite`)
       else {
         fs.writeFile(path, createAssets.commandFile, (err) => {
           if (err) console.log('error', err)
-          log.ger(null, `file: '${fileName}.j's created @ /lib/commands`)
+          log.ger(null, `file: '${fileName}.j's created @ /src/commands`)
         })
       }
     }
 
     if (mod) {
       let path = resolve(__dirname, '../modules', `${fileName}.js`)
-      if (fs.existsSync(path) && !force) log.ger('warn', `file: '${fileName}.js' already exists @ /lib/modules. Use the 'force' flag (--force, -f) to overwrite`)
+      if (fs.existsSync(path) && !force) log.ger('warn', `file: '${fileName}.js' already exists @ /src/modules. Use the 'force' flag (--force, -f) to overwrite`)
       else {
         fs.writeFile(path, createAssets.moduleFile, (err) => {
           if (err) console.log('error', err)
-          log.ger(null, `file: '${fileName}.js' created @ /lib/modules`)
+          log.ger(null, `file: '${fileName}.js' created @ /src/modules`)
         })
       }
     }

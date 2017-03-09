@@ -20,15 +20,16 @@
   },
   "nyc": {
     "exclude": [
-      "lib/scaffolding/**",
-      "lib/modules/pipe.js",
-      "lib/modules/*.assets.js"
+      "src/scaffolding/**",
+      "src/modules/pipe.js",
+      "src/modules/*.assets.js"
     ]
   },
   "standard": {
     "globals": [
       "it",
-      "describe"
+      "describe",
+      "context"
     ]
   },
   "devDependencies": {
@@ -40,6 +41,6 @@
   "scripts": {
     "standard": "standard --fix",
     "test": "mocha test/**/*.js",
-    "test:coverage": "yarn standard & nyc --reporter=html --reporter=text mocha test/**/*.js"
+    "test:coverage": "yarn standard & nyc --reporter=html --reporter=text mocha --reporter min test/**/*.js"
   }
 }

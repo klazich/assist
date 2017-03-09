@@ -14,7 +14,7 @@ describe('modules/log.js', () => {
       expect(formatted).to.equal('        << QI/a')
     })
 
-    describe('\'title\' should be trimmed and uppercased', () => {
+    context('\'title\' should be trimmed and uppercased', () => {
       let message = 'test message'
       let tests = [
         { args: ['title', message], expected: 'TITLE' },
@@ -55,7 +55,7 @@ describe('modules/log.js', () => {
       expect(stripAnsi(format())).to.equal('         > ')
     })
 
-    describe('should color titles correctly', () => {
+    context('should color titles correctly', () => {
       let message = 'test message'
       let tests = [
         { args: ['error', message], expected: ['red', colors.red('ERROR')] },
