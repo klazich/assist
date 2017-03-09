@@ -10,6 +10,7 @@ const yargs = require('yargs')
 const _ = require('lodash')
 const moment = require('moment')
 const stripAnsi = require('strip-ansi')
+const winston = require('winston')
 
 // External dependencies to pass to the commands
 let dep = {
@@ -24,7 +25,8 @@ let dep = {
   yargs,
   _,
   moment,
-  stripAnsi
+  stripAnsi,
+  winston
 }
 
 // Internal dependencies
