@@ -30,8 +30,6 @@ module.exports = function (dep) {
 
     const root = resolve(__dirname, '..')
 
-    if (debug) log.ger('debug', JSON.stringify(argv, null, 2))
-
     let tasks = []
 
 
@@ -69,7 +67,14 @@ module.exports = function (dep) {
     }
 
     tasks.forEach(o => {
-      if (o.exists && !force) return log.ger('warn', `${o.path} already exists.\nUse the 'force' flag (--force, -f) to overwrite`)
+      if (o.exists && !force) return log.ger(null,
+        `A file already exists at path:
+  (use the 'force' flag (--force, -f) to overwrite)
+          
+          ${o.path}
+
+The file was not created.`
+      )
       if (o.option === 'make') {
         create.file(o.path, o.data)
           .then(filePath => log.ger(null, `created ${filePath}`))
@@ -81,6 +86,10 @@ module.exports = function (dep) {
           .catch(e => log.ger('error', e))
       }
     })
+
+    console.log()
+
+    if (debug) log.ger('debug', JSON.stringify(argv, null, 2))
 
   }
 

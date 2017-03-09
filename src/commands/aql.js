@@ -5,8 +5,10 @@ module.exports = function (dep) {
   cmd.desc = 'Get sample size with given AQL level and lot size'
   cmd.builder = {
     debug: {
-      alias: 'd',
       describe: 'Output argv object'
+    },
+    'debug-result': {
+      describe: 'Output result object'
     },
     expand: {
       alias: 'e',
@@ -35,10 +37,9 @@ module.exports = function (dep) {
           })
         }
 
-        if (debug) {
-          log.ger('debug', 'argv > ' + JSON.stringify(argv, null, 2))
-          log.ger('debug', 'result > ' + JSON.stringify(result, null, 2))
-        }
+        if (debug) log.ger('debug', JSON.stringify(argv, null, 2))
+        if (debugResult) log.ger('debug',JSON.stringify(result, null, 2))
+
       })
       .catch((e) => log.ger('error', e))
   }
