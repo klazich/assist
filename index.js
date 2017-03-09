@@ -1,4 +1,3 @@
-'use strict'
 
 const { join, resolve } = require('path')
 const camelCase = require('camelcase')
@@ -29,7 +28,7 @@ let dep = {
 }
 
 // Internal dependencies
-const inDepFns = requireDir(join(__dirname, 'lib', 'modules'), { recurse: true })
+const inDepFns = requireDir(join(__dirname, 'src', 'modules'), { recurse: true })
 Object.keys(inDepFns).forEach(name => {
   let child = inDepFns[name]
   typeof child === 'function'
@@ -39,7 +38,7 @@ Object.keys(inDepFns).forEach(name => {
 })
 
 // Load commands from folder and pass dependencies
-const commandsFn = requireDir(join(__dirname, 'lib', 'commands'))
+const commandsFn = requireDir(join(__dirname, 'src', 'commands'))
 const commands = Object.keys(commandsFn).map((i) => commandsFn[i](dep))
 
 // Export commands and modules separately
