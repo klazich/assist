@@ -4,47 +4,23 @@ module.exports = function (dep) {
 
   const { winston, resolve, join } = dep
 
-  let logDir = resolve(__dirname, '..', '..', 'logs')
+  let root = resolve(__dirname, '..', '..')
 
-  let logger = new winston.Logger({
+  let logger = new (winston.Logger)({
+    level: 'debug',
     transports: [
-      new (winston.transports.Console)({
-        level: 'debug',
-        colorize: true,
-        prettyPrint: true,
-        showLevel: false
-      }),
-      new (winston.transports.File)({
-        name: 'debug-file',
-        level: 'debug',
-        filename: join(logDir, 'filelog-debug.log'),
-        colorize: true,
-        prettyPrint: true
-      }),
-      new (winston.transports.File)({
-        name: 'error-file',
-        level: 'error',
-        filename: join(logDir, 'filelog-error.log'),
-        colorize: true,
-        prettyPrint: true
-      })
-    ],
-    exceptionHandlers: [
-      new (winston.transports.Console)({
-        colorize: true,
-        prettyPrint: true,
-        humanReadableUnhandledException: true
-      }),
-      new (winston.transports.File)({
-        filename: join(logDir, 'exceptions.log'),
-        humanReadableUnhandledException: true,
-        prettyPrint: true
-      })
+      new (winston.transports.Console)({ colorize: true, prettyPrint: true, showLevel: false }),
+      new (winston.transports.File)({ filename: join(root, '.log'), prettyPrint: true })
     ]
-
-  })
+  });
 
   logger.cli()
+
+  // logger.on('logging', function (transport, level, msg, meta) {
+  //   // [msg] and [meta] have now been logged at [level] to [transport]
+  //   setInterval(()=>{console.log("[%s] and [%s] have now been logged at [%s] to [%s]",
+  //     msg, JSON.stringify(meta), level, transport.name);}, 5000)
+  // });
 
   result = logger
 
