@@ -57,3 +57,5 @@ jspm_packages
 
 .vscode
 playground.js
+log/
+.scrape/
