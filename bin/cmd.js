@@ -17,12 +17,12 @@ yargs
   .options({ cwd: { desc: 'Change the current working directory' } })
   .demand(1)
   .epilog(
-  (homepage
-    ? `| Documentation: ${homepage}\n`
-    : '') +
-  (version
-    ? `| version: ${version}`
-    : ''))
+    (homepage
+      ? `| Documentation: ${homepage}\n`
+      : '') +
+    (version
+      ? `| version: ${version}`
+      : ''))
   .fail(function (msg, err) {
     if (err) log.error(err)
     else log.warn(msg)

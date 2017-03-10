@@ -1,4 +1,3 @@
-
 module.exports = function (dep) {
   let result = {}
 
@@ -12,7 +11,7 @@ module.exports = function (dep) {
       new (winston.transports.Console)({ colorize: true, prettyPrint: true, showLevel: false }),
       new (winston.transports.File)({ filename: join(root, '.log'), prettyPrint: true })
     ]
-  });
+  })
 
   logger.cli()
 
