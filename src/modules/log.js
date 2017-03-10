@@ -1,16 +1,17 @@
 module.exports = function (dep) {
   let result = {}
 
-  const { winston, resolve, join } = dep
+  const { winston, resolve, join, dir } = dep
 
-  // let root = resolve(__dirname, '..', '..')
+  // console.log(Object.keys(dep))
 
   require('winston-daily-rotate-file')
+
   let logger = new (winston.Logger)({
     level: 'debug',
     transports: [
       new (winston.transports.DailyRotateFile)({
-        filename: 'log/log',
+        filename: join(dir.root(__dirname), 'log/log'),
         datePattern: 'yyyy-MM-dd.',
         prepend: true
         // level: process.env.ENV === 'development' ? 'debug' : 'info'
