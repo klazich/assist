@@ -1,7 +1,7 @@
 module.exports = function (dep) {
   let result = {}
 
-  const { fs, createAssets } = dep
+  const { fs } = dep
 
   result.file = (filePath, data) => {
     return new Promise((resolve, reject) => {

@@ -26,7 +26,8 @@ module.exports = function (dep) {
       (surname
         ? ' ' + surname
         : '')
-    log.ger(null, message)
+    log.info(message)
+    console.log(message)
   }
   return cmd
 }
