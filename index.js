@@ -33,12 +33,14 @@ let dep = {
 }
 
 // Internal dependencies
-const inDepFns = requireDir(join(__dirname, 'src', 'modules'), { recurse: true })
-Object.keys(inDepFns).forEach(name => { dep[ camelCase(name) ] = inDepFns[ name ](dep) })
+const inDepFns = requireDir(join(__dirname, 'src', 'modules'))
+Object.keys(inDepFns).forEach(name => { dep[camelCase(name)] = inDepFns[name](dep) })
 
 // Load commands from folder and pass dependencies
 const commandsFn = requireDir(join(__dirname, 'src', 'commands'))
-const commands = Object.keys(commandsFn).map((i) => commandsFn[ i ](dep))
+const commands = Object.keys(commandsFn).map((i) => commandsFn[i](dep))
+
+//console.log(Object.keys(dep), dep.root)
 
 // Export commands and modules separately
 module.exports = { commands, modules: dep }
