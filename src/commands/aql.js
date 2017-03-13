@@ -5,11 +5,7 @@ module.exports = function (dep) {
   cmd.desc = 'Get sample size with given AQL level and lot size'
   cmd.builder = {
     debug: {
-      describe: 'Output argv object'
-    },
-    'debug-result': {
-      alias: 'dr',
-      describe: 'Output result object'
+      describe: 'Output argv or returned object'
     },
     expand: {
       alias: 'e',
@@ -37,9 +33,14 @@ module.exports = function (dep) {
             else log.info(`  ${_.padEnd(o.aql, 6)}  ${_.padEnd(o.size, 6)}`)
           })
         }
-
-        if (debug) log.debug(argv)
-        if (dr) log.debug(result)
+        if (debug) {
+          try {
+            if (debug.includes('argv')) log.debug(argv)
+            if (debug.includes('returned')) log.debug(result)
+          } catch (e) {
+            return Promise.reject(e)
+          }
+        }
       })
       .catch((e) => log.error(e))
   }

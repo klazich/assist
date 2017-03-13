@@ -45,4 +45,4 @@ const commands = Object.keys(commandsFn).map((i) => commandsFn[i](dep))
 //console.log(Object.keys(dep), dep.root)
 
 // Export commands and modules separately
-module.exports = { commands, modules: dep }
+module.exports = { commands, modules: dep /*, dir: __dirname */ }
