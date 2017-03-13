@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { join, resolve } = require('path')
 const camelCase = require('camelcase')
 const requireDir = require('require-dir')
