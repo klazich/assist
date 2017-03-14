@@ -6,29 +6,47 @@ module.exports = function (dep) {
   cmd.builder = {
     debug: {
       describe: "Output argv object"
+    },
+    ext: {
+      describe: "Extention to save as (default: '.txt')"
     }
   }
   cmd.handler = function (argv) {
 
-    const { scrape, log, dir, join, fs } = dep
+    const { scrape, log, dir, join, fs, _ } = dep
     const { debug } = argv
 
     const readDir = argv.readDir || process.env.READ_DIR
     const writeDir = argv.writeDir || process.env.WRITE_DIR
+    const ext = argv.ext || '.csv'
 
     scrape.readReports(readDir).forEach(o => {
-      fs.writeFileSync(join(writeDir, `${o.name}.txt`), JSON.stringify(o, null, 2))
-      log.info(`${process.pid}  report for ${o.name} @ ${writeDir}\\${o.name}.txt`)
+
+      let reportPath = join(writeDir, `${o.name + ext}`)
+
+      let reportCSV = scrape.toCSV(o.data, o.headings)
+
+      fs.writeFile(reportPath, reportCSV, (err) => {
+        if (err) log.error(err)
+        else log.info(`${o.file.base} -> ${o.name + ext}\t successful\t file @ ${writeDir}`)
+      })
+
+
+
+
 
     })
-    log.debug(JSON.stringify(argv, null, 2))
+
+
 
 
 
 
 
     if (debug) {
-      if (debug.includes('argv')) log.debug(argv)
+      if (typeof debug === 'string') {
+        if (debug.includes('argv')) log.debug('argv', { argv })
+      }
     }
   }
 

@@ -1,37 +1,24 @@
 module.exports = function (dep) {
   let result = {}
 
-  const { path, tabletojson, _, fs, log } = dep
+  const { path, tabletojson, _, fs, log, json2csv } = dep
   const { resolve, join, parse } = path
 
   const root = resolve(__dirname, '..')
 
-
-  result.parseReport = (report) => {
-    let reportPath = resolve(dirpath, report)
-    let reportData = fs.readFileSync(reportPath)
-
-    let headings = []
-    let [, ...data] = tabletojson.convert(reportData)
-      .map(e => e[0])
-      .filter(o => Object.keys(o).length >= 12)
-      .map(o => Object.values(_.pick(o, ['0', '2', '4', '6', '8', '10'])))
-      .map(e => e.map(p => p.replace(/,|"/g, '')))
-      .sort((a, b) => a.includes('')
-        ? (b.includes('') ? 0 : 1)
-        : (b.includes('') ? -1 : 0))
-      .map((e, i) => i === 0 ? headings = e : _.zipObject(headings, e))
-
-    return JSON.stringify({
-      name: report.split('.')[0],
-      file: parse(reportPath),
-      headings,
-      data
-    })
+  result.toCSV = (data, fields) => {
+    try {
+      let csv = json2csv({ data, fields, excelStrings: true })
+      log.verbose('conversion to CSV successful', __filename)
+      return csv
+    } catch (err) {
+      log.verbose('conversion to CSV failed', __filename)
+      log.error(err)
+    }
   }
 
-  result.toCSV = (jsonObj) => {
-    // todo: ...
+  result.toTable = (jsonObj) => {
+    // todo
   }
 
   result.readReports = (dirpath) => fs.readdirSync(dirpath)
@@ -66,7 +53,7 @@ module.exports = function (dep) {
       return {
         name: report.split('.')[0],
         file: parse(reportPath),
-        //date: new Date(date),
+        date: new Date(date),
         headings,
         data
       }
