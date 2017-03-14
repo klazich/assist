@@ -14,6 +14,7 @@ const moment = require('moment')
 const stripAnsi = require('strip-ansi')
 const winston = require('winston')
 const tabletojson = require('tabletojson')
+const json2csv = require('json2csv');
 
 // External dependencies to pass to the commands
 let dep = {
@@ -31,7 +32,8 @@ let dep = {
   moment,
   stripAnsi,
   winston,
-  tabletojson
+  tabletojson,
+  json2csv,
 }
 
 // Internal dependencies

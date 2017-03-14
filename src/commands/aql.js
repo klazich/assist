@@ -22,9 +22,11 @@ module.exports = function (dep) {
         let { lot, range } = result
         let { size, aql } = range.filter(e => e.result)[0]
 
+        let _size = green(size)
+
         log.info(`Lot Size:    ${_.padEnd(lotSize, 6)} ${gray(`(${lot})`)}`)
         log.info(`AQL Level:   ${_.padEnd(level, 6)} ${gray(`(${aql})`)}`)
-        log.info(`Sample Size: ${green(size)}`)
+        log.info(`Sample Size: ${_size}`)
 
         if (expand) {
           log.info('')
