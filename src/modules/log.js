@@ -1,18 +1,18 @@
 module.exports = function (dep) {
   let result
 
-  const { fs, winston, resolve, join, dir, colors, _ } = dep
+  const { fs, winston, resolve, join, dir, colors, _, util } = dep
 
   require('winston-daily-rotate-file')
   winston.emitErrs = true
 
 
-  if(!fs.existsSync(join(dir.root(__dirname), 'log'))) fs.mkdirSync(join(dir.root(__dirname), 'log'))
+  if (!fs.existsSync(join(dir.root(__dirname), 'log'))) fs.mkdirSync(join(dir.root(__dirname), 'log'))
 
   let pre
   const tsFormat = () => {
     let stamp = `[${_.padEnd(process.pid + ']', 5)}\t${new Date().toLocaleTimeString()}`
-    if (pre !== process.pid) stamp = '-'.repeat(100) + '\n' + stamp
+    if (pre !== process.pid) stamp = '-'.repeat(125) + '\n' + stamp
     pre = process.pid
     return stamp
   }
@@ -25,7 +25,7 @@ module.exports = function (dep) {
         prettyPrint: true,
         handleExceptions: true,
         humanReadableUnhandledException: true,
-        showLevel: false
+        //showLevel: false
       }),
       new winston.transports.DailyRotateFile({
         level: 'debug',
@@ -37,7 +37,12 @@ module.exports = function (dep) {
         timestamp: tsFormat,
         colorize: false,
         handleExceptions: true,
-        prettyPrint: true
+        prettyPrint: true,
+        // formatter: function (options) {
+        //   // Return string will be passed to logger.
+        //   return options.timestamp() + ' ' + options.level.toUpperCase() + ' ' + (options.message ? options.message : '') +
+        //     (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
+        // }
       })
     ],
     exitOnError: false
@@ -45,7 +50,21 @@ module.exports = function (dep) {
 
   logger.cli()
 
+
+
   result = logger
+
+  result.object = (title, obj) => {
+
+    let indt = title.length + 5
+
+    //logger.debug('-'.repeat(96))
+
+    util.inspect(obj).split('\n').forEach((e, i) => {
+      if (i === 0) logger.debug(title + ' ->  ' + e)
+      else logger.debug(' '.repeat(indt) + e)
+    })
+  }
 
   return result
 }

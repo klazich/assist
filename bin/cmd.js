@@ -14,6 +14,7 @@ commands.forEach(cmd => yargs.command(cmd.command, cmd.desc, cmd.builder, cmd.ha
 
 yargs
   .help()
+  .env('QI')
   .options({ cwd: { desc: 'Change the current working directory' } })
   .demand(1)
   .epilog(

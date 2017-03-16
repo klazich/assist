@@ -1,23 +1,21 @@
 module.exports = function (dep) {
   let result = {}
 
-  const { path, tabletojson, _, fs, log, json2csv } = dep
+  const { path, tabletojson, _, fs, log, json2csv, json2xls } = dep
   const { resolve, join, parse } = path
 
 
   result.toCSV = (data, fields) => {
-    try {
-      let csv = json2csv({ data, fields, excelStrings: true })
-      log.verbose('conversion to CSV successful')
-      return csv
-    } catch (err) {
-      log.verbose('conversion to CSV failed')
-      log.error(err)
-    }
+    try { return json2csv({ data, fields, excelStrings: true }) }
+    catch (err) { log.error(err) }
   }
 
-  result.toTable = (jsonObj) => {
-    // todo
+  result.toJSON = (data, fields) => {
+    return JSON.stringify(data, null, 2)
+  }
+
+  result.toXLS = (data, fields) => {
+    return json2xls(data, { fields })
   }
 
   result.readReports = (dirpath) => fs.readdirSync(dirpath)
@@ -27,13 +25,13 @@ module.exports = function (dep) {
       let reportPath = resolve(dirpath, report)
       let reportData = fs.readFileSync(reportPath)
 
-      let headings = []
+      let fields = []
       let [, ...data] = tabletojson.convert(reportData)
         .map(e => e[0])
         .filter(o => Object.keys(o).length >= 12)
         .map(o => Object.values(_.pick(o, ['0', '2', '4', '6', '8', '10'])))
         .map(e => e.map(p => p.replace(/,|"/g, '')))
-        .map((e, i) => i === 0 ? headings = e : _.zipObject(headings, e))
+        .map((e, i) => i === 0 ? fields = e : _.zipObject(fields, e))
       // .sort((a, b) => a.includes('')
       //   ? (b.includes('') ? 0 : 1)
       //   : (b.includes('') ? -1 : 0))
@@ -52,7 +50,7 @@ module.exports = function (dep) {
         name: report.split('.')[0],
         file: parse(reportPath),
         date: new Date(date),
-        headings,
+        fields,
         data
       }
     })

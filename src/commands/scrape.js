@@ -1,42 +1,78 @@
 module.exports = function (dep) {
   let cmd = {}
 
-  cmd.command = 'scrape [ext] [readDir] [writeDir]'
+  cmd.command = 'scrape [readDir] [ext]'
   cmd.desc = 'Scrape report data from Axapta HTML files'
   cmd.builder = {
     debug: {
       describe: 'Output argv object'
     },
     ext: {
-      describe: "Extension to save as (default: '.txt')"
+      describe: "Extension to save as (default: '.txt')",
+      array: true
+    },
+    leave: {
+      alias: 'l',
+      describe: 'Don\'t remove parsed reports'
     }
+
   }
   cmd.handler = function (argv) {
 
-    const { scrape, log, dir, join, fs, _ } = dep
-    const { debug } = argv
+    const { scrape, log, dir, path, join, fs, _, moment, util } = dep
+    const { debug, readDir, leave } = argv
+    const ext = argv.ext || ['.json']
 
-    const readDir = argv.readDir || process.env.READ_DIR
-    const writeDir = argv.writeDir || process.env.WRITE_DIR
-    const ext = argv.ext || '.json'
+    if (!fs.existsSync(readDir)) {
+      log.error(`readDir: '${readDir}' does not exist`)
+      return 1
+    }
+
+    let conversions = ext
+      .map(e => ({
+        name: e.replace(/\./g, ''),
+        path: join(readDir, e.replace(/\./g, '')),
+        ext: e
+      }))
 
     scrape.readReports(readDir).forEach(o => {
 
-      if(!fs.existsSync(writeDir)) fs.mkdirSync(writeDir)
+      let { data, fields, name, file } = o
+      let timestamp = moment().format('_YYYYMMDD')
 
-      let reportPath = join(writeDir, `${o.name + ext}`)
+      conversions.forEach(type => {
+        if (!fs.existsSync(type.path)) fs.mkdirSync(type.path)
 
-      let reportCSV = scrape.toCSV(o.data, o.headings)
+        let convertData
+        switch (type.name) {
+          case 'csv':
+            convertData = scrape.toCSV(data, fields)
+            break
+          case 'xls':
+            convertData = scrape.toXLS(data, fields)
+            break
+          case 'done':
+            convertData = data
+            break
+          default:
+          case 'json':
+            convertData = scrape.toJSON(data, fields)
+        }
 
-      fs.writeFile(reportPath, reportCSV, (err) => {
-        if (err) log.error(err)
-        else log.info(`${o.file.base} -> ${o.name + ext}\t successful\t file @ ${writeDir}`)
+        let dirpath = type.path
+        let filepath = join(dirpath, name + timestamp + type.ext)
+
+        fs.writeFile(filepath, convertData, (err) => {
+          if (err) log.error(err)
+          else log.info([_.padEnd(file.base, 15), '->', _.padEnd(type.ext, 6), `successful, file @ '${dirpath}'`].join(' '))
+        })
+
       })
     })
 
     if (debug) {
       if (typeof debug === 'string') {
-        if (debug.includes('argv')) log.debug('argv', { argv })
+        if (debug.includes('argv')) log.object('argv', argv)
       }
     }
   }

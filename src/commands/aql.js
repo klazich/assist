@@ -37,8 +37,8 @@ module.exports = function (dep) {
         }
         if (debug) {
           try {
-            if (debug.includes('argv')) log.debug(argv)
-            if (debug.includes('returned')) log.debug(result)
+            if (debug.includes('argv')) log.object('argv',argv)
+            if (debug.includes('returned')) log.object('returned', result)
           } catch (e) {
             return Promise.reject(e)
           }

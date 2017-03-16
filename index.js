@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const { join, resolve } = require('path')
+const util = require('util')
 const camelCase = require('camelcase')
 const requireDir = require('require-dir')
 const colors = require('chalk')
@@ -15,11 +16,13 @@ const stripAnsi = require('strip-ansi')
 const winston = require('winston')
 const tabletojson = require('tabletojson')
 const json2csv = require('json2csv')
+const json2xls = require('json2xls')
 
 // External dependencies to pass to the commands
 let dep = {
   join,
   resolve,
+  util,
   fs,
   path,
   readline,
@@ -33,7 +36,8 @@ let dep = {
   stripAnsi,
   winston,
   tabletojson,
-  json2csv
+  json2csv,
+  json2xls
 }
 
 // Internal dependencies
