@@ -4,7 +4,6 @@ module.exports = function (dep) {
   const { path, tabletojson, _, fs, log, json2csv } = dep
   const { resolve, join, parse } = path
 
-  const root = resolve(__dirname, '..')
 
   result.toCSV = (data, fields) => {
     try {
@@ -22,8 +21,9 @@ module.exports = function (dep) {
   }
 
   result.readReports = (dirpath) => fs.readdirSync(dirpath)
+    .filter(e => fs.lstatSync(join(dirpath, e)).isFile())
+    .filter(e => /\.html?/.test(e))
     .map((report) => {
-      if (/\.ini/g.test(report)) return undefined
       let reportPath = resolve(dirpath, report)
       let reportData = fs.readFileSync(reportPath)
 
@@ -38,7 +38,6 @@ module.exports = function (dep) {
       //   ? (b.includes('') ? 0 : 1)
       //   : (b.includes('') ? -1 : 0))
 
-
       let otherData = tabletojson.convert(reportData)
         .map(e => e[0])
         .filter(o => Object.keys(o).length < 12)
@@ -47,8 +46,7 @@ module.exports = function (dep) {
             if (v.includes('As of')) return true
           }
         })
-      let date = Object.values(otherData)
-        .find(v => /\d+\/\d+\/\d\d\d\d/.test(v))
+      let date = Object.values(otherData).find(v => /\d+\/\d+\/\d\d\d\d/.test(v))
 
       return {
         name: report.split('.')[0],
@@ -59,20 +57,6 @@ module.exports = function (dep) {
       }
     })
     .filter(e => e !== undefined)
-
-  // result.readReports = (dirpath) => {
-  //   return new Promise((resolve, reject) => {
-  //     fs.readdir(dirpath, (err, files) => {
-  //       if (err) reject(err)
-  //       try {
-  //         resolve(files.map(result.parseReport))
-  //       } catch (e) {
-  //         reject(e)
-  //       }
-  //     })
-  //   })
-
-  // }  
 
   return result
 }
