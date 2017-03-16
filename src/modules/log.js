@@ -1,14 +1,17 @@
 module.exports = function (dep) {
-  let result = {}
+  let result
 
-  const { winston, resolve, join, dir, colors, _ } = dep
+  const { fs, winston, resolve, join, dir, colors, _ } = dep
 
   require('winston-daily-rotate-file')
   winston.emitErrs = true
 
+
+  if(!fs.existsSync(join(dir.root(__dirname), 'log'))) fs.mkdirSync(join(dir.root(__dirname), 'log'))
+
   let pre
   const tsFormat = () => {
-    let stamp = `[${_.padEnd(process.pid + ']', 7)}\t${new Date().toLocaleTimeString()}`
+    let stamp = `[${_.padEnd(process.pid + ']', 5)}\t${new Date().toLocaleTimeString()}`
     if (pre !== process.pid) stamp = '-'.repeat(100) + '\n' + stamp
     pre = process.pid
     return stamp
@@ -22,11 +25,11 @@ module.exports = function (dep) {
         prettyPrint: true,
         handleExceptions: true,
         humanReadableUnhandledException: true,
-        showLevel: false,
+        showLevel: false
       }),
       new winston.transports.DailyRotateFile({
-        level: 'verbose',
-        //label: process.pid,
+        level: 'debug',
+        // label: process.pid,
         filename: join(dir.root(__dirname), 'log/log'),
         datePattern: 'yyyy-MM-dd.',
         prepend: true,
@@ -34,7 +37,7 @@ module.exports = function (dep) {
         timestamp: tsFormat,
         colorize: false,
         handleExceptions: true,
-        prettyPrint: true,
+        prettyPrint: true
       })
     ],
     exitOnError: false

@@ -4,7 +4,6 @@ module.exports = function (dep) {
   const { resolve, fs } = dep
 
   result.root = (directory = __dirname, limit = 3) => {
-
     // todo: check that cwd is a valid path
 
     let dirs = Array.from({ length: limit }, (v, i) => ({
