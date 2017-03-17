@@ -32,9 +32,9 @@ module.exports = function (dep) {
         .map(o => Object.values(_.pick(o, ['0', '2', '4', '6', '8', '10'])))
         .map(e => e.map(p => p.replace(/,|"/g, '')))
         .map((e, i) => i === 0 ? fields = e : _.zipObject(fields, e))
-      // .sort((a, b) => a.includes('')
-      //   ? (b.includes('') ? 0 : 1)
-      //   : (b.includes('') ? -1 : 0))
+        .sort((a, b) => Object.values(a).includes('')
+          ? (Object.values(b).includes('') ? 0 : 1)
+          : (Object.values(b).includes('') ? -1 : 0))
 
       let otherData = tabletojson.convert(reportData)
         .map(e => e[0])
