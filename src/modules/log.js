@@ -25,14 +25,12 @@ module.exports = function (dep) {
         prettyPrint: true,
         handleExceptions: true,
         humanReadableUnhandledException: true,
-        //showLevel: false
+        showLevel: false
       }),
-      new winston.transports.DailyRotateFile({
+      new winston.transports.File({
         level: 'debug',
         // label: process.pid,
-        filename: join(dir.root(__dirname), 'log/log'),
-        datePattern: 'yyyy-MM-dd.',
-        prepend: true,
+        filename: join(dir.root(__dirname), 'log', 'all.log'),
         json: false,
         timestamp: tsFormat,
         colorize: false,
@@ -43,14 +41,40 @@ module.exports = function (dep) {
         //   return options.timestamp() + ' ' + options.level.toUpperCase() + ' ' + (options.message ? options.message : '') +
         //     (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '');
         // }
+      }),
+      new winston.transports.DailyRotateFile({
+        level: 'debug',
+        label: process.pid,
+        filename: join(dir.root(__dirname), 'log/json/log'),
+        datePattern: 'yyyy-MM-dd.',
+        prepend: true,
+        handleExceptions: true,
       })
+    ],
+        exceptionHandlers: [
+          new winston.transports.File({
+            filename: join(dir.root(__dirname), 'log', 'exceptions.log'),
+ 
+        json: false,
+        timestamp: tsFormat,
+        colorize: false,
+        handleExceptions: true,
+        prettyPrint: true,
+          })
     ],
     exitOnError: false
   })
 
+
+  // logger.rewriters.push(function (level, msg, meta) {
+  //   const indent = 34
+  //   const s = '\n' + ' '.repeat(indent)
+  //   if (meta && Object.keys(meta).length) {
+  //     return '----------' + s + util.inspect(meta, { depth: 3 }).replace(/\n/g, s)
+  //   }
+  // })
+
   logger.cli()
-
-
 
   result = logger
 
