@@ -5,7 +5,8 @@ module.exports = function (dep) {
   cmd.desc = 'Scrape report data from Axapta HTML files'
   cmd.builder = {
     debug: {
-      describe: 'Output argv object'
+      describe: 'Output argv object',
+      array: true
     },
     ext: {
       describe: "Extension to save as (default: '.txt')",
