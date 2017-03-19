@@ -1,11 +1,10 @@
 module.exports = function (dep) {
   let result
 
-  const { fs, winston, resolve, join, dir, colors, _, util } = dep
+  const { fs, winston, join, dir, _, util } = dep
 
   require('winston-daily-rotate-file')
   winston.emitErrs = true
-
 
   if (!fs.existsSync(join(dir.root(__dirname), 'log'))) fs.mkdirSync(join(dir.root(__dirname), 'log'))
 
@@ -20,7 +19,9 @@ module.exports = function (dep) {
   let logger = new winston.Logger({
     transports: [
       new winston.transports.Console({
-        level: process.env.ENV === 'development' ? 'debug' : 'info',
+        level: process.env.ENV === 'development'
+          ? 'debug'
+          : 'info',
         colorize: true,
         prettyPrint: true,
         handleExceptions: true,
@@ -35,7 +36,7 @@ module.exports = function (dep) {
         timestamp: tsFormat,
         colorize: false,
         handleExceptions: true,
-        prettyPrint: true,
+        prettyPrint: true
         // formatter: function (options) {
         //   // Return string will be passed to logger.
         //   return options.timestamp() + ' ' + options.level.toUpperCase() + ' ' + (options.message ? options.message : '') +
@@ -48,23 +49,21 @@ module.exports = function (dep) {
         filename: join(dir.root(__dirname), 'log/json/log'),
         datePattern: 'yyyy-MM-dd.',
         prepend: true,
-        handleExceptions: true,
+        handleExceptions: true
       })
     ],
-        exceptionHandlers: [
-          new winston.transports.File({
-            filename: join(dir.root(__dirname), 'log', 'exceptions.log'),
- 
+    exceptionHandlers: [
+      new winston.transports.File({
+        filename: join(dir.root(__dirname), 'log', 'exceptions.log'),
         json: false,
         timestamp: tsFormat,
         colorize: false,
         handleExceptions: true,
-        prettyPrint: true,
-          })
+        prettyPrint: true
+      })
     ],
     exitOnError: false
   })
-
 
   // logger.rewriters.push(function (level, msg, meta) {
   //   const indent = 34
@@ -79,10 +78,9 @@ module.exports = function (dep) {
   result = logger
 
   result.object = (title, obj) => {
-
     let indt = title.length + 5
 
-    //logger.debug('-'.repeat(96))
+    // logger.debug('-'.repeat(96))
 
     util.inspect(obj).split('\n').forEach((e, i) => {
       if (i === 0) logger.debug(title + ' ->  ' + e)

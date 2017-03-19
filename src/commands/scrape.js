@@ -9,20 +9,14 @@ module.exports = function (dep) {
       array: true
     },
     ext: {
-      describe: "Extension to save as (default: '.txt')",
+      describe: 'Extension to save as (default: \'.txt\')',
       array: true
-    },
-    leave: {
-      alias: 'l',
-      describe: 'Don\'t remove parsed reports'
     }
-
   }
   cmd.handler = function (argv) {
-
-    const { scrape, log, dir, path, join, fs, _, moment, util } = dep
-    const { debug, readDir, leave } = argv
-    const ext = argv.ext || ['.json']
+    const { scrape, log, join, fs, _, moment } = dep
+    const { debug, readDir } = argv
+    const ext = argv.ext || [ '.json' ]
 
     if (!fs.existsSync(readDir)) {
       log.error(`readDir: '${readDir}' does not exist`)
@@ -37,7 +31,6 @@ module.exports = function (dep) {
       }))
 
     scrape.readReports(readDir).forEach(o => {
-
       let { data, fields, name, file } = o
       let timestamp = moment().format('_YYYYMMDD')
 
@@ -65,9 +58,8 @@ module.exports = function (dep) {
 
         fs.writeFile(filepath, convertData, (err) => {
           if (err) log.error(err)
-          else log.info([_.padEnd(file.base, 15), '->', _.padEnd(type.ext, 6), `successful, file @ '${dirpath}'`].join(' '))
+          else log.info([ _.padEnd(file.base, 15), '->', _.padEnd(type.ext, 6), `successful, file @ '${dirpath}'` ].join(' '))
         })
-
       })
     })
 

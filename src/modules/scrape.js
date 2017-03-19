@@ -4,10 +4,8 @@ module.exports = function (dep) {
   const { path, tabletojson, _, fs, log, json2csv, json2xls } = dep
   const { resolve, join, parse } = path
 
-
   result.toCSV = (data, fields) => {
-    try { return json2csv({ data, fields, excelStrings: true }) }
-    catch (err) { log.error(err) }
+    try { return json2csv({ data, fields, excelStrings: true }) } catch (err) { log.error(err) }
   }
 
   result.toJSON = (data, fields) => {
