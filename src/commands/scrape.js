@@ -16,7 +16,7 @@ module.exports = function (dep) {
   cmd.handler = function (argv) {
     const { scrape, log, join, fs, _, moment } = dep
     const { debug, readDir } = argv
-    const ext = argv.ext || [ '.json' ]
+    const ext = argv.ext || ['.csv' || '.json']
 
     if (!fs.existsSync(readDir)) {
       log.error(`readDir: '${readDir}' does not exist`)
@@ -39,35 +39,36 @@ module.exports = function (dep) {
 
         let convertData
         switch (type.name) {
-          case 'csv':
-            convertData = scrape.toCSV(data, fields)
-            break
           case 'xls':
             convertData = scrape.toXLS(data, fields)
             break
-          case 'done':
-            convertData = data
-            break
-          default:
           case 'json':
             convertData = scrape.toJSON(data, fields)
+            break
+          default:
+          case 'csv':
+            convertData = scrape.toCSV(data, fields)
+            break
         }
 
         let dirpath = type.path
         let filepath = join(dirpath, name + timestamp + type.ext)
 
         fs.writeFile(filepath, convertData, (err) => {
-          if (err) log.error(err)
-          else log.info([ _.padEnd(file.base, 15), '->', _.padEnd(type.ext, 6), `successful, file @ '${dirpath}'` ].join(' '))
+          if (err) {
+            log.error([_.padEnd(file.base, 15), '->', _.padEnd(type.ext, 6), 'FAILED'].join(' '))
+            log.error(err.message, { err })
+          }
+
+          else log.info([file.base, '\t to', _.padEnd(type.ext, 6), ('DONE'), `file location: '${dirpath}'`].join(' '))
         })
       })
     })
 
     if (debug) {
-      if (typeof debug === 'string') {
-        if (debug.includes('argv')) log.object('argv', argv)
-      }
+      process.nextTick(() => { if (debug.includes('argv')) log.debug({ argv }) })
     }
+    
   }
 
   return cmd

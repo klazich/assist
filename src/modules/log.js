@@ -7,6 +7,7 @@ module.exports = function (dep) {
   winston.emitErrs = true
 
   if (!fs.existsSync(join(dir.root(__dirname), 'log'))) fs.mkdirSync(join(dir.root(__dirname), 'log'))
+  if (!fs.existsSync(join(dir.root(__dirname), 'log', 'json'))) fs.mkdirSync(join(dir.root(__dirname), 'log', 'json'))
 
   let pre
   const tsFormat = () => {
@@ -87,6 +88,6 @@ module.exports = function (dep) {
       else logger.debug(' '.repeat(indt) + e)
     })
   }
-
+  logger.debug(process.title)
   return result
 }
