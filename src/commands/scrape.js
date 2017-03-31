@@ -34,6 +34,14 @@ module.exports = function (dep) {
       let { data, fields, name, file } = o
       let timestamp = moment().format('_YYYYMMDD')
 
+      if (!fs.existsSync(join(readDir, 'src'))) fs.mkdirSync(join(readDir, 'src'))
+      fs.writeFile(
+        join(readDir, 'src', moment(o.date).format('YYYYMMDD') + '.json'),
+        JSON.stringify(o, null, 2),
+        (err) => {
+          if (err) log.error(err.message, { err })
+        })
+
       conversions.forEach(type => {
         if (!fs.existsSync(type.path)) fs.mkdirSync(type.path)
 
@@ -43,7 +51,7 @@ module.exports = function (dep) {
             convertData = scrape.toXLS(data, fields)
             break
           case 'json':
-            convertData = scrape.toJSON(data, fields)
+            convertData = scrape.toJSON(data)
             break
           default:
           case 'csv':
@@ -59,7 +67,6 @@ module.exports = function (dep) {
             log.error([_.padEnd(file.base, 15), '->', _.padEnd(type.ext, 6), 'FAILED'].join(' '))
             log.error(err.message, { err })
           }
-
           else log.info([file.base, '\t to', _.padEnd(type.ext, 6), ('DONE'), `file location: '${dirpath}'`].join(' '))
         })
       })
@@ -68,7 +75,7 @@ module.exports = function (dep) {
     if (debug) {
       process.nextTick(() => { if (debug.includes('argv')) log.debug({ argv }) })
     }
-    
+
   }
 
   return cmd

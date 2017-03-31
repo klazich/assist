@@ -5,11 +5,13 @@ module.exports = function (dep) {
   const { resolve, join, parse } = path
 
   result.toCSV = (data, fields) => {
-    try { return json2csv({ data, fields, excelStrings: true }) } catch (err) { log.error(err) }
+    try {
+      return json2csv({ data, fields, /*excelStrings: true*/ })
+    } catch (err) { log.error(err) }
   }
 
-  result.toJSON = (data, fields) => {
-    return JSON.stringify(data, null, 2)
+  result.toJSON = (data) => {
+    return JSON.stringify(data.slice(1), null, 2)
   }
 
   result.toXLS = (data, fields) => {
@@ -24,7 +26,7 @@ module.exports = function (dep) {
       let reportData = fs.readFileSync(reportPath)
 
       let fields = []
-      let [, ...data] = tabletojson.convert(reportData)
+      let data = tabletojson.convert(reportData)
         .map(e => e[0])
         .filter(o => Object.keys(o).length >= 12)
         .map(o => Object.values(_.pick(o, ['0', '2', '4', '6', '8', '10'])))
@@ -33,6 +35,14 @@ module.exports = function (dep) {
         .sort((a, b) => Object.values(a).includes('')
           ? (Object.values(b).includes('') ? 0 : 1)
           : (Object.values(b).includes('') ? -1 : 0))
+        .slice(2)
+        .map(e => {
+          for (let k of Object.keys(e)) {
+            if (/[total|cost|price]/g.test(k)) e[k] = '$' + e[k]
+            if (/number/g.test(k)) e[k] = '\'' + e[k]
+
+          }
+        })
 
       let otherData = tabletojson.convert(reportData)
         .map(e => e[0])
@@ -48,6 +58,7 @@ module.exports = function (dep) {
         name: report.split('.')[0],
         file: parse(reportPath),
         date: new Date(date),
+        entries: data.length,
         fields,
         data
       }
