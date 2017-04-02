@@ -6,7 +6,7 @@ module.exports = function (dep) {
 
   result.toCSV = (data, fields) => {
     try {
-      return json2csv({ data, fields, /*excelStrings: true*/ })
+      return json2csv({ data, fields })
     } catch (err) { log.error(err) }
   }
 
@@ -27,25 +27,30 @@ module.exports = function (dep) {
 
       let fields = []
       let data = tabletojson.convert(reportData)
-        .map(e => e[0])
+        .map(e => e[ 0 ])
         .filter(o => Object.keys(o).length >= 12)
-        .map(o => Object.values(_.pick(o, ['0', '2', '4', '6', '8', '10'])))
+        .map(o => Object.values(_.pick(o, [ '0', '2', '4', '6', '8', '10' ])))
         .map(e => e.map(p => p.replace(/,|"/g, '')))
-        .map((e, i) => i === 0 ? fields = e : _.zipObject(fields, e))
+        .map((e, i) => i === 0
+          ? fields = e
+          : _.zipObject(fields, e))
         .sort((a, b) => Object.values(a).includes('')
-          ? (Object.values(b).includes('') ? 0 : 1)
-          : (Object.values(b).includes('') ? -1 : 0))
+          ? (Object.values(b).includes('')
+            ? 0
+            : 1)
+          : (Object.values(b).includes('')
+            ? -1
+            : 0))
         .slice(2)
         .map(e => {
           for (let k of Object.keys(e)) {
-            if (/[total|cost|price]/g.test(k)) e[k] = '$' + e[k]
-            if (/number/g.test(k)) e[k] = '\'' + e[k]
-
+            if (/total|price/g.test(k) && e[ k ] !== '') e[ k ] = '$' + e[ k ]
           }
+          return e
         })
 
       let otherData = tabletojson.convert(reportData)
-        .map(e => e[0])
+        .map(e => e[ 0 ])
         .filter(o => Object.keys(o).length < 12)
         .find(o => {
           for (let v of Object.values(o)) {
@@ -55,7 +60,7 @@ module.exports = function (dep) {
       let date = Object.values(otherData).find(v => /\d+\/\d+\/\d\d\d\d/.test(v))
 
       return {
-        name: report.split('.')[0],
+        name: report.split('.')[ 0 ],
         file: parse(reportPath),
         date: new Date(date),
         entries: data.length,

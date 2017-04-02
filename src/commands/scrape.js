@@ -16,7 +16,7 @@ module.exports = function (dep) {
   cmd.handler = function (argv) {
     const { scrape, log, join, fs, _, moment } = dep
     const { debug, readDir } = argv
-    const ext = argv.ext || ['.csv' || '.json']
+    const ext = argv.ext || [ '.csv' || '.json' ]
 
     if (!fs.existsSync(readDir)) {
       log.error(`readDir: '${readDir}' does not exist`)
@@ -64,18 +64,18 @@ module.exports = function (dep) {
 
         fs.writeFile(filepath, convertData, (err) => {
           if (err) {
-            log.error([_.padEnd(file.base, 15), '->', _.padEnd(type.ext, 6), 'FAILED'].join(' '))
+            log.error([ file.base, '->', type.ext, 'FAILED' ].join(' '))
             log.error(err.message, { err })
+          } else {
+            log.info(file.base, 'to', type.ext, 'DONE', `file location: '${dirpath}'`)
           }
-          else log.info([file.base, '\t to', _.padEnd(type.ext, 6), ('DONE'), `file location: '${dirpath}'`].join(' '))
         })
       })
     })
 
     if (debug) {
-      process.nextTick(() => { if (debug.includes('argv')) log.debug({ argv }) })
+      if (debug.includes('argv')) log.debug({ argv })
     }
-
   }
 
   return cmd
