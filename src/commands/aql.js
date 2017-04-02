@@ -14,7 +14,7 @@ module.exports = function (dep) {
     }
   }
   cmd.handler = function (argv) {
-    const { level, lotSize, dr, debug, expand } = argv
+    const { level, lotSize, debug, expand } = argv
     const { _, log, aql: { getSampleSize } } = dep
     const { gray, green } = dep.colors
 
