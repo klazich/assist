@@ -11,7 +11,7 @@ module.exports = function (dep) {
 
   let pre
   const tsFormat = () => {
-    let stamp = `[${_.padEnd(process.pid + ']', 5)}\t${new Date().toLocaleTimeString()}`
+    let stamp = `[${_.padEnd(process.pid + ']', 5)}\t${new Date().toLocaleDateString()}\t${new Date().toLocaleTimeString()}`
     if (pre !== process.pid) stamp = '-'.repeat(125) + '\n' + stamp
     pre = process.pid
     return stamp
