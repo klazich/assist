@@ -18,6 +18,25 @@ module.exports = function (dep) {
     return json2xls(data, { fields })
   }
 
+  let map1 = o => Object.values(_.pick(o, ['0', '2', '4', '6', '8', '10']))
+  let map2 = e => e.map(p => p.replace(/,|"/g, ''))
+  let map3 = (e, i) => i === 0
+    ? fields = e
+    : _.zipObject(fields, e)
+  let map4 = e => {
+    for (let k of Object.keys(e)) {
+      if (/total|price/g.test(k) && e[k] !== '') e[k] = '$' + e[k]
+    }
+    return e
+  }
+  let sort1 = (a, b) => Object.values(a).includes('')
+    ? (Object.values(b).includes('')
+      ? 0
+      : 1)
+    : (Object.values(b).includes('')
+      ? -1
+      : 0)
+
   result.readReports = (dirpath) => fs.readdirSync(dirpath)
     .filter(e => fs.lstatSync(join(dirpath, e)).isFile())
     .filter(e => /\.html?/.test(e))
@@ -27,30 +46,17 @@ module.exports = function (dep) {
 
       let fields = []
       let data = tabletojson.convert(reportData)
-        .map(e => e[ 0 ])
+        .map(e => e[0])
         .filter(o => Object.keys(o).length >= 12)
-        .map(o => Object.values(_.pick(o, [ '0', '2', '4', '6', '8', '10' ])))
-        .map(e => e.map(p => p.replace(/,|"/g, '')))
-        .map((e, i) => i === 0
-          ? fields = e
-          : _.zipObject(fields, e))
-        .sort((a, b) => Object.values(a).includes('')
-          ? (Object.values(b).includes('')
-            ? 0
-            : 1)
-          : (Object.values(b).includes('')
-            ? -1
-            : 0))
+        .map(map1)
+        .map(map2)
+        .map(map3)
+        .sort(sort1)
         .slice(2)
-        .map(e => {
-          for (let k of Object.keys(e)) {
-            if (/total|price/g.test(k) && e[ k ] !== '') e[ k ] = '$' + e[ k ]
-          }
-          return e
-        })
+        .map(map4)
 
       let otherData = tabletojson.convert(reportData)
-        .map(e => e[ 0 ])
+        .map(e => e[0])
         .filter(o => Object.keys(o).length < 12)
         .find(o => {
           for (let v of Object.values(o)) {
@@ -60,7 +66,7 @@ module.exports = function (dep) {
       let date = Object.values(otherData).find(v => /\d+\/\d+\/\d\d\d\d/.test(v))
 
       return {
-        name: report.split('.')[ 0 ],
+        name: report.split('.')[0],
         file: parse(reportPath),
         date: new Date(date),
         entries: data.length,

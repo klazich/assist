@@ -17,6 +17,7 @@ const winston = require('winston')
 const tabletojson = require('tabletojson')
 const json2csv = require('json2csv')
 const json2xls = require('json2xls')
+const { exec } = require('child_process')
 
 // External dependencies to pass to the commands
 let dep = {
@@ -37,7 +38,8 @@ let dep = {
   winston,
   tabletojson,
   json2csv,
-  json2xls
+  json2xls,
+  exec
 }
 
 // Internal dependencies
